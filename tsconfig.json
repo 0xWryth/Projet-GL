@@ -21,7 +21,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "types": ["cypress", "cypress-file-upload"]
+    // "types": ["cypress", "cypress-file-upload"]
   },
   "include": [
     "next-env.d.ts",
@@ -29,7 +29,8 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "cypress"
   ],
   "types": [
     "node"

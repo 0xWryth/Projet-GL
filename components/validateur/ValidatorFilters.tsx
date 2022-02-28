@@ -53,7 +53,7 @@ export default function ValidatorFilters(props: ValidatorFiltersProps) {
             onChange={(value: string) => props.onYearChange(value)}
             style={{ flex: "unset" }}
         />
-        <Chips value={props.filters} onChange={props.setFilters}
+        <Chips value={props.filters} onChange={(values: NOTEDEFRAIS_ETAT[]) => props.setFilters(values)}
             multiple variant="filled" direction="column" title="Filtrer les notes par statut">
             <Chip value={NOTEDEFRAIS_ETAT.EN_ATTENTE_DE_VALIDATION}>Non traitées</Chip>
             <Chip value={NOTEDEFRAIS_ETAT.VALIDEE}>Validées</Chip>

@@ -25,8 +25,8 @@ export interface ValidatorProps {
 }
 
 const sortStrategies: SelectItem[] = [
-    { value: 'alphabet_order', label: 'Ordre alphabétique', sortMethod: (a:INoteDeFrais, b: INoteDeFrais) => a.user?.nom.localeCompare(b.user.nom)},
-    { value: 'alphabet_reverse', label: 'Ordre alphabétique inverse', sortMethod: (a:INoteDeFrais, b: INoteDeFrais) => b.user?.nom.localeCompare(a.user.nom)},
+    { value: 'alphabet_order', label: 'Ordre alphabétique', sortMethod: (a:INoteDeFrais, b: INoteDeFrais) => a.user?.nom.localeCompare(b?.user?.nom ?? "")},
+    { value: 'alphabet_reverse', label: 'Ordre alphabétique inverse', sortMethod: (a:INoteDeFrais, b: INoteDeFrais) => b.user?.nom.localeCompare(a?.user?.nom ?? "")},
     { value: 'date_ascending', label: 'Date de dépot (croissant)', disabled: true }, // , sortMethod: (a, b) => {a-b}},
     { value: 'date_descending', label: 'Date de dépot (décroissant)', disabled: true }, // , sortMethod: (a, b) => {a-b}},
 ];
@@ -60,7 +60,7 @@ export default function Validator(props: ValidatorProps) {
 
     const updateNotesState = async () => {
         /* TODO: handle res==null ? */
-        const res = await Routes.VALIDATEUR.get();
+        const res = await Routes.VALIDATEUR.get() as INoteDeFrais[];
 
         // Update available (unique) years
         const allYears = res.map(note => note.annee);
@@ -93,8 +93,8 @@ export default function Validator(props: ValidatorProps) {
         // Find keyword
         const keywords = query.trim().replace(' ', '|');
         const pattern = new RegExp(`${keywords}`, 'i');
-        filteredNotes = filteredNotes.filter(note => (pattern.test(note.user.nom) ||
-                                                       pattern.test(note.user.prenom)))
+        filteredNotes = filteredNotes.filter(note => (pattern.test(note?.user?.nom ?? "") ||
+                                                       pattern.test(note?.user?.prenom ?? "")))
     }
 
 

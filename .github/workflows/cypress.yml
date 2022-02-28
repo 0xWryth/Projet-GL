@@ -1,19 +1,20 @@
-name: Main workflow
+name: Cypress tests
 on: [push]
 jobs:
   cypress-run:
     runs-on: ubuntu-20.04
     env:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_PORT: 3307
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: iwantmymoneyback
     steps:
       - name: 🔀 Checkout
         uses: actions/checkout@v2
 
-      # Maybe not useful since github.com/actions/virtual-environments/issues/375 ?
-      # - name: 🧹 Shutdown Ubuntu MySQL (SUDO)
-      #   run: sudo service mysql stop
-
+      - name: Start mysql service
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE iwantmymoneyback;' -uroot -proot
+          mysql -e 'SHOW DATABASES;' -uroot -proot
       - name: 🔐 Create env file
         run: |
           touch .env
@@ -23,31 +24,13 @@ jobs:
           echo DB_HOST=localhost >> .env
           echo DB_USERNAME=root >> .env
           echo DB_PASSWORD=$MYSQL_ROOT_PASSWORD >> .env
-          echo DB_DATABASE=iwantmymoneyback >> .env
-          echo DB_PORT=$MYSQL_PORT >> .env
+          echo DB_DATABASE=$MYSQL_DATABASE >> .env
+          echo DB_PORT=3306 >> .env
           echo DB_SYNCHRONIZE=true >> .env
           echo DB_LOGGING=false >> .env
           cat .env
-
-      - name: 🐬 Set up MySQL
-        uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: $MYSQL_PORT
-          container port: $MYSQL_PORT
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mysql version: '8.0'
-          mysql database: 'iwantmymoneyback'
-          mysql root password: $MYSQL_ROOT_PASSWORD
-
-      - name: ⏲ Wait for MySQL
-        run: |
-          while ! mysqladmin ping --host=127.0.0.1 --password=$MYSQL_ROOT_PASSWORD --silent; do
-            sleep 1
-          done
-
       - name: 🗃 DB creation
-        run: mysql -h 127.0.0.1 -u root --password=$MYSQL_ROOT_PASSWORD iwantmymoneyback < cypress/fixtures/DbFinal.sql
+        run: mysql -u root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < cypress/fixtures/DbFinal_V2.sql
 
       - name: 📪 Cache node modules
         uses: actions/cache@v2
@@ -55,13 +38,14 @@ jobs:
           cache-name: cache-node-modules
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
+          path: |
+            ~/.npm
+            ~/.next
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-
       - name: 🧰 Install dependencies
         run: npm ci
 
@@ -80,3 +64,21 @@ jobs:
           start: npm run dev
           # quote the url to be safe against YML parsing surprises
           wait-on: 'http://localhost:3000/'
+
+      # Store screenshots after the test run completes
+      # NOTE: screenshots will be generated only if E2E test failed
+      # thus we store screenshots only on failures
+      - name: 🖼 Upload screenshot artifacts
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
+      # Test run video was always captured, so this action uses "always()" condition
+      # - name: 🎥 Upload video artifacts
+      #   uses: actions/upload-artifact@v2
+      #   if: always()
+      #   with:
+      #     name: cypress-videos
+      #     path: cypress/videos

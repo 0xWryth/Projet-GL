@@ -68,7 +68,12 @@ describe('Passer en mode validateur - Chef de service', () => {
 
   it('Impossibilité de passage en mode validateur', () => {
     cy.get('button').eq(0).click()
-    cy.contains('Passer en mode validateur').click()
+    
+    // Provoque une erreur puisque le bouton n'est pas présent
+    // cy.contains('Passer en mode validateur').click()
+
+    // Assure que le bouton concerné n'existe pas
+    cy.contains('Passer en mode validateur').should('not.exist')
   })
 
 })

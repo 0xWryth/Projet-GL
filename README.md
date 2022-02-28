@@ -2,7 +2,10 @@
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-[![Actions Status](https://github.com/0xWryth/Projet-GL/workflows/Main%20workflow/badge.svg)](https://github.com/0xWryth/Projet-GL/actions)
+[![Actions Status](https://github.com/0xWryth/Projet-GL/workflows/Cypress%20tests/badge.svg)](https://github.com/0xWryth/Projet-GL/actions)
+[![Actions Status](https://github.com/0xWryth/Projet-GL/workflows/CodeQL/badge.svg)](https://github.com/0xWryth/Projet-GL/actions)
+
+![Application screenshot](./Screenshot.jpg)
 
 ## Getting Started
 
@@ -79,6 +82,38 @@ You also need to complete `DB_DATABASE=` with the name of the database created l
 > ```bash
 > npm run db
 > ```
+
+
+### Front-end testing
+#### Configuration
+
+As a randomly generated database would not comply with test scenarios, you must load a test-dedicated database named `DbFinal.sql` located in `cypress/fixtures` using phpMyAdmin dashboard.
+
+#### Run tests
+
+To run your first tests, you can use the following command, **once the dev server is running**:
+
+```bash
+npm run cypress
+```
+
+<!--
+To run a set of tests in a specific folder
+```bash
+???
+```
+To run a specific test method
+```bash
+???
+```
+-->
+
+#### Create your test
+
+Please create new functional tests (`.js` files) under `cypress/integration/projet-gl` if you want them to run automatically in CI.
+
+See [cypress documentation](https://docs.cypress.io/guides/getting-started/writing-your-first-test#Write-your-first-test) to learn how to write test scenarios.
+
 
 ## Learn More
 

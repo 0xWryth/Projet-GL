@@ -4,13 +4,11 @@ import { getConnection } from "typeorm";
 import { RequestError } from "../../../../entity/geneal_struct";
 import { ILigneDeFrais, LigneDeFrais, lineToApi } from "../../../../entity/lignedefrais.entity";
 import { NoteDeFrais } from "../../../../entity/notedefrais.entity";
-import { USER_ROLES } from "../../../../entity/user.entity";
-import { NOTEDEFRAIS_ETAT } from "../../../../entity/utils";
+import { NOTEDEFRAIS_ETAT, USER_ROLES } from "../../../../entity/utils";
 import { prepareConnection } from "../../database";
 import { getService } from "../home";
 
 export type LigneRequest = ILigneDeFrais | RequestError;
-
 
 export async function getLigneValidateur(validateurId: string, ligneId: string): Promise<ILigneDeFrais | undefined> {
   const serviceId = await getService(validateurId);
